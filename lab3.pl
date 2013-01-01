@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%% auxiliary predicates %%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-vertex(V) :- edge(V,_,_), edge(_,V,_).
+vertex(V) :- edge(V,_,_); edge(_,V,_).
 
 %%%%%%%%%%% marks utils %%%%%%%%%%%%%%
 :- dynamic marked/1.
