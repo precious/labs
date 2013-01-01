@@ -1,3 +1,4 @@
+=========================
 run:
 	*swipl -s lab3.pl -g reset*
 
