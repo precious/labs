@@ -61,7 +61,7 @@ process_neighbors(V,[H|T]) :-
 	process_neighbors(V,T).
 
 % next predicate sets for each vertex length of shortest path from F as tag
-set_shortest_pathes(F) :-
+set_shortest_paths(F) :-
 	set_tag(F,0),
 	process_vertices_recursively; true.
 
@@ -79,5 +79,5 @@ get_shortest_path(F,S,P,Res) :-
 	get_shortest_path(F,Prev,[S|P],Res).
 
 % predicate for getting shortest path between verices F and S
-% predicate set_shortest_pathes(F) should be called first
+% predicate set_shortest_paths(F) should be called first
 get_shortest_path(F,S,Res) :- get_shortest_path(F,S,[],Res), !.
