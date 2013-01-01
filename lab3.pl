@@ -9,6 +9,8 @@ marked(V) :- fail.
 unmarked(V) :- vertex(V), not(marked(V)).
 mark(V) :- assert(marked(V)).
 get_all_unmarked(L) :- findall(Next,unmarked(Next),U), list_to_set(U,L).
+get_all_verices(L) :- findall(V,vertex(V),U), list_to_set(U,L).
+%%% V ---> Neighbor
 unmarked_neighbor(V,N) :- edge(V,N,_), unmarked(N).
 get_all_unmarked_neighbors(V,L) :-
 	findall(Next,unmarked_neighbor(V,Next),U), list_to_set(U,L).
@@ -19,6 +21,11 @@ get_tag_internal(0,1000000).
 get_tag(V,T) :- (get_tag_internal(V,T) -> get_tag_internal(V,T); T = 1000000).
 set_tag(V,T) :- (get_tag_internal(V,_) -> retract(get_tag_internal(V,_)); true),
 	assert(get_tag_internal(V,T)).
+
+reset_tags_and_marks([]).
+reset_tags_and_marks([H|T]) :- set_tag(H,1000000),
+	(marked(H) -> retract(marked(H)); true), reset_tags_and_marks(T).
+reset :- consult('base.pl'), get_all_verices(L), reset_tags_and_marks(L).
 
 %%%%%%%% selection utils %%%%%%%%%%%%%
 get_vertex_with_min_tag_from_list([H|T],V) :-
@@ -46,6 +53,7 @@ process_vertices_recursively :-
 	mark(V),
 	process_vertices_recursively.
 
+%%% V ---> Neighbor
 process_neighbors(V,[]).
 process_neighbors(V,[H|T]) :-
 	get_tag(V,T_v),get_tag(H,T_h),edge(V,H,E_lengt),Sum is T_v + E_lengt,
@@ -57,7 +65,8 @@ set_shortest_pathes(F) :-
 	set_tag(F,0),
 	process_vertices_recursively; true.
 
-neighbor_in_path(V,T_v,N) :- edge(N,V,E_length), get_tag(N,T_n),
+%%% Neighbor ---> V
+neighbor_in_path(V,T_v,N) :- edge(N,V,E_length), get_tag(N,T_n), 
 	Sum is T_n + E_length, Sum == T_v.
 get_previous(V,P) :-
 	get_tag(V,T_v),
@@ -68,9 +77,7 @@ get_shortest_path(F,F,P,Res) :- append([F],P,Res).
 get_shortest_path(F,S,P,Res) :-
 	get_previous(S,Prev),
 	get_shortest_path(F,Prev,[S|P],Res).
+
+% predicate for getting shortest path between verices F and S
+% predicate set_shortest_pathes(F) should be called first
 get_shortest_path(F,S,Res) :- get_shortest_path(F,S,[],Res), !.
-	
-	
-
-
-init :- consult('base.pl') .
